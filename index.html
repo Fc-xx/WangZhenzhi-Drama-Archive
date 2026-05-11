@@ -400,6 +400,7 @@
                 <li><a href="./docs/鹿城文史资料 第6辑 温州城区历代人物录 (追忆夏家仁烈士 王震之 史拾一 p171-173）.pdf">《追忆夏家仁烈士》（鹿城文史资料 第6辑）</a></li>
                 <li><a href="./docs/王震之自述整理.docx">《王震之自述整理》</a></li>
                 <li><a href="./docs/温州文史资料 第2辑 纪念抗日战争胜利四十周 (上前线去！到皖南去！ 王震之 P76~81).pdf">《上前线去！到皖南去！》（温州文史资料 第2辑）</a></li>
+                <li><a href="./docs/鹿城文史资料 第14辑 (追忆在皖南新四军聆听周恩来同志做报告 王震之 P90~94).pdf">《追忆在皖南新四军聆听周恩来同志作报告》</a></li>
             </ul>
             <button class="add-btn add-new-btn" onclick="openAddPage('writings')">＋ 提交文献补充</button>
         </div>
@@ -510,20 +511,24 @@
            updateCategoryStats(); 
        };
 
-       // 2. 沉浸式阅读器核心逻辑
+       // 2. 沉浸式阅读器核心逻辑 (包含了手机端防下载修复)
        function openPdfViewer(filename, title, lowerName) {
            document.getElementById('pdf-viewer-overlay').style.display = 'flex';
            document.body.style.overflow = 'hidden'; // 锁定底层网页滚动
            document.getElementById('viewer-title').textContent = "正在阅读：" + title.replace(/《|》/g, '');
 
            let rawUrl = "./docs/" + filename;
-           let iframeSrc = rawUrl;
+           let iframeSrc = rawUrl; // 电脑端默认使用浏览器原生的超快 PDF 引擎
            
-           // 如果是 Word 文档，需要借助微软的在线服务才能在 iframe 里展示
+           // 获取当前网页的绝对路径前缀
+           let basePath = window.location.href.split('?')[0].split('#')[0];
+           basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+
+           // 判断当前设备是不是手机或平板
+           let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+
+           // 处理 Word 文档
            if (lowerName.endsWith('.docx') || lowerName.endsWith('.doc')) {
-               let basePath = window.location.href.split('?')[0].split('#')[0];
-               basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
-               // 判断是否在服务器环境
                if (!basePath.startsWith("http")) {
                    alert("Word 文档需要部署到服务器环境才能在网页内直接预览。\n已为您切换为直接下载。");
                    closePdfViewer();
@@ -532,6 +537,15 @@
                }
                let absoluteUrl = basePath + "docs/" + encodeURIComponent(filename);
                iframeSrc = "https://view.officeapps.live.com/op/view.aspx?src=" + encodeURIComponent(absoluteUrl);
+           } 
+           // 核心修复：针对手机端 PDF 触发下载的问题
+           else if (lowerName.endsWith('.pdf') && isMobile) {
+               if (basePath.startsWith("http")) {
+                   // 如果已经发布到 GitHub Pages（网址有 http），则调用专业的 PDF.js 引擎强行渲染在网页内
+                   let absoluteUrl = basePath + "docs/" + encodeURIComponent(filename);
+                   iframeSrc = "https://mozilla.github.io/pdf.js/web/viewer.html?file=" + encodeURIComponent(absoluteUrl);
+               } 
+               // 注：如果本地直接打开，还是会走上面的原生下载逻辑
            }
 
            document.getElementById('viewer-iframe').src = iframeSrc;
