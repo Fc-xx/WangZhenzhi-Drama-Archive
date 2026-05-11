@@ -46,22 +46,15 @@
         }
 
         .container::before, .container::after {
-            content: '';
-            position: absolute;
-            width: 25px;
-            height: 25px;
-            border: 2px solid var(--line-gold);
-            z-index: 1;
-            pointer-events: none;
+            content: ''; position: absolute; width: 25px; height: 25px;
+            border: 2px solid var(--line-gold); z-index: 1; pointer-events: none;
         }
         .container::before { top: 15px; left: 15px; border-right: none; border-bottom: none; }
         .container::after { bottom: 15px; right: 15px; border-left: none; border-top: none; }
 
         header {
-            text-align: center;
-            border-bottom: 2px solid var(--text-red);
-            padding-bottom: 30px;
-            position: relative;
+            text-align: center; border-bottom: 2px solid var(--text-red);
+            padding-bottom: 30px; position: relative;
         }
         header::after {
             content: ''; display: block; width: 60%; height: 1px;
@@ -166,25 +159,18 @@
             letter-spacing: 1px; transition: 0.3s; font-weight: bold; white-space: nowrap; 
         }
         .add-btn:hover { background-color: var(--text-red); color: #fff; border-color: var(--text-red); }
-        
-        .add-new-btn {
-            width: 100%; margin-top: 15px; border-style: dashed;
-        }
+        .add-new-btn { width: 100%; margin-top: 15px; border-style: dashed; }
 
         .add-page-overlay {
-            display: none; 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-outer);
-            z-index: 9999; overflow-y: auto;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-outer); z-index: 9999; overflow-y: auto;
         }
-        
         .add-page-container {
             background-color: var(--bg-inner); border: 1px solid var(--line-gold);
             outline: 2px solid var(--text-red); outline-offset: -10px;
             padding: 50px; max-width: 700px; margin: 8vh auto;
             box-shadow: 0 15px 50px rgba(139, 28, 28, 0.15); position: relative;
         }
-        
         .add-page-container::before, .add-page-container::after {
             content: ''; position: absolute; width: 25px; height: 25px;
             border: 2px solid var(--line-gold); pointer-events: none;
@@ -196,18 +182,13 @@
             text-align: center; color: var(--text-red); font-size: 2em;
             letter-spacing: 4px; margin-bottom: 30px; border-bottom: 2px solid var(--line-gold); padding-bottom: 15px;
         }
-
         .form-group { margin-bottom: 25px; }
-        .form-group label {
-            display: block; font-weight: bold; margin-bottom: 10px; color: var(--text-main); font-size: 1.1em;
-        }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 10px; color: var(--text-main); font-size: 1.1em; }
         .form-group input, .form-group select, .form-group textarea {
             width: 100%; padding: 12px; font-size: 1.05em; border: 1px solid var(--line-gold);
             background-color: #fbf9f6; color: var(--text-main); font-family: inherit;
         }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: 1px solid var(--text-red); }
-        .form-hint { font-size: 0.85em; color: #888; margin-top: 5px; }
-
         .add-page-actions { display: flex; gap: 20px; margin-top: 40px; }
         .add-page-actions button { flex: 1; padding: 12px; font-size: 1.1em; }
         .btn-cancel { border-style: dashed; }
@@ -221,36 +202,48 @@
 
         .mobile-break { display: none; }
 
-        /* 回到顶部按钮样式 */
+        /* 回到顶部按钮（主页专用） */
         .back-to-top {
-            position: fixed;
-            bottom: 40px;
-            right: 40px;
-            width: 50px;
-            height: 50px;
-            background-color: var(--bg-inner);
-            color: var(--text-red);
-            border: 2px solid var(--line-gold);
-            border-radius: 50%;
-            font-size: 1.5em;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(139, 28, 28, 0.15);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
+            position: fixed; bottom: 40px; right: 40px; width: 50px; height: 50px;
+            background-color: var(--bg-inner); color: var(--text-red); border: 2px solid var(--line-gold);
+            border-radius: 50%; font-size: 1.5em; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(139, 28, 28, 0.15); z-index: 1000;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center; text-decoration: none;
+        }
+        .back-to-top:hover {
+            background-color: var(--text-red); color: white; border-color: var(--text-red); transform: translateY(-5px);
         }
 
-        .back-to-top:hover {
-            background-color: var(--text-red);
-            color: white;
-            border-color: var(--text-red);
-            transform: translateY(-5px);
+        /* 沉浸式阅读器界面 */
+        #pdf-viewer-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #333333; z-index: 99999; flex-direction: column;
+        }
+        .viewer-header {
+            background: #222222; color: #ffffff; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .viewer-header span { font-size: 1.1em; letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
+        .viewer-header button {
+            background: none; border: 1px solid #fff; color: #fff; padding: 6px 15px;
+            cursor: pointer; font-size: 0.95em; border-radius: 3px; transition: 0.2s;
+        }
+        .viewer-header button:hover { background: #fff; color: #222; }
+        
+        #viewer-iframe { flex: 1; border: none; width: 100%; background-color: #fff; }
+
+        /* 右下角独立悬浮下载按钮 */
+        .viewer-download-btn {
+            position: absolute; bottom: 30px; right: 30px;
+            background-color: var(--text-red); color: #fff; border: 2px solid rgba(255,255,255,0.2);
+            padding: 12px 25px; border-radius: 50px; font-weight: bold; font-size: 1.05em;
+            text-decoration: none; box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            z-index: 100000; transition: 0.2s; font-family: inherit; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .viewer-download-btn:hover {
+            background-color: #a52323; transform: scale(1.05); color: #fff; border-color: #fff;
         }
 
         /* 移动端特殊布局样式 */
@@ -280,15 +273,11 @@
             footer { margin: 25px auto 15px auto; padding: 0 15px; font-size: 0.85em; line-height: 1.6; }
             footer p { margin: 5px 0; text-align: justify; text-align-last: center; }
             
-            /* 移动端回到顶部按钮 */
-            .back-to-top {
-                bottom: 20px;
-                right: 20px;
-                width: 45px;
-                height: 45px;
-                font-size: 1.2em;
-            }
+            .back-to-top { bottom: 20px; right: 20px; width: 45px; height: 45px; font-size: 1.2em; }
+            .viewer-header span { font-size: 0.9em; max-width: 60%; }
+            .viewer-download-btn { bottom: 20px; right: 20px; padding: 10px 20px; font-size: 0.95em; }
         }
+        .search-hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -329,7 +318,7 @@
                 <li><a href="./docs/“红灯”（独幕剧）.pdf">《红灯》（独幕剧）</a></li>
                 <li><a href="./docs/大丹河（话剧大丹河插曲）：[歌曲].pdf">《大丹河》—— 话剧《大丹河》插曲 [歌曲]</a></li>
                 <li><a href="./docs/古城的怒吼(独幕剧).pdf">《古城的怒吼》（独幕剧）</a></li>
-                <li><a href="./docs/流寇队长.pdf">《流寇队长》</a></li>
+                <li><a href="./docs/流寇队长 (王震之).pdf">《流寇队长》</a></li>
                 <li><a href="./docs/咆哮的河北（独幕剧）.pdf">《咆哮的河北》（独幕剧）</a></li>
                 <li><a href="./docs/顺民 (崔嵬，王震之合著).pdf">《顺民》（崔嵬、王震之合著）</a></li>
                 <li><a href="./docs/松花江上.pdf">《松花江上》</a></li>
@@ -426,7 +415,7 @@
             </ul>
             <button class="add-btn add-new-btn" onclick="openAddPage('memoirs')">＋ 提交文献补充</button>
         </div>
-    </div> 
+        </div> 
     
     <footer>
         <p><strong>致谢与说明</strong></p>
@@ -436,9 +425,20 @@
         <p class="copyright">© 2024 王震之戏剧实践研究课题组. 弘扬延安精神，赓续文艺血脉.</p>
     </footer>
 
-    <button id="backToTopBtn" class="back-to-top" onclick="scrollToTop()" title="回到顶部">
-        ↑
-    </button>
+    <button id="backToTopBtn" class="back-to-top" onclick="scrollToTop()" title="回到顶部">↑</button>
+
+    <div id="pdf-viewer-overlay">
+        <div class="viewer-header">
+            <span id="viewer-title">文献阅读</span>
+            <button onclick="closePdfViewer()">❌ 退出阅读</button>
+        </div>
+        <iframe id="viewer-iframe" src=""></iframe>
+        
+        <a id="viewer-download-btn" href="" download class="viewer-download-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            下载此文献
+        </a>
+    </div>
 
     <div id="add-page-overlay" class="add-page-overlay">
         <div class="add-page-container">
@@ -473,23 +473,10 @@
         </div>
     </div>
 
-    <div id="file-action-overlay" class="add-page-overlay">
-        <div class="add-page-container" style="max-width: 450px; text-align: center; margin-top: 15vh;">
-            <h2 class="add-page-header" style="font-size: 1.5em; margin-bottom: 20px;">请选择查阅方式</h2>
-            <p id="file-action-title" style="margin-bottom: 30px; font-weight: bold; color: var(--text-main); font-size: 1.05em; line-height: 1.5; padding: 0 10px;"></p>
-            <div class="add-page-actions" style="margin-top: 0; flex-direction: column; gap: 15px;">
-                <button id="btn-preview" class="add-btn" style="display: none; width: 100%;">👀 在线预览</button>
-                <button id="btn-download" class="add-btn" style="width: 100%;">⬇️ 直接下载 / 本地打开</button>
-                <button class="add-btn btn-cancel" onclick="closeFileActionModal()" style="width: 100%; margin-top: 10px;">取消返回</button>
-            </div>
-        </div>
-    </div>
-
     <div id="email-choice-overlay" class="add-page-overlay">
         <div class="add-page-container" style="max-width: 450px; text-align: center; margin-top: 12vh;">
             <h2 class="add-page-header" style="font-size: 1.5em; margin-bottom: 15px;">选择发送方式</h2>
             <p style="font-size: 0.9em; color: #666; margin-bottom: 20px; padding: 0 10px;">我们已为您准备好文献登记信息，请选择：</p>
-            
             <div class="add-page-actions" style="margin-top: 0; flex-direction: column; gap: 12px;">
                 <button onclick="handleEmailMethod('app')" class="add-btn" style="width: 100%; background-color: var(--text-red); color: white;">唤起默认邮件 App</button>
                 <div style="height: 1px; background: #eee; margin: 5px 0;"></div>
@@ -504,56 +491,77 @@
    <script>
        let tempMailInfo = { subject: "", body: "", target: "tangdu91@qq.com" };
 
-       function isMobileDevice() {
-           return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-       }
-
+       // 1. 初始化列表：拦截所有点击，交由内置阅读器处理
        window.onload = function() {
            const existingLinks = document.querySelectorAll('.data-list li a');
            existingLinks.forEach(a => {
                const href = a.getAttribute('href');
                if (href && href !== '#' && href !== 'javascript:void(0);') {
                    const filename = href.split('/').pop(); 
-                   if (isMobileDevice()) {
-                       a.removeAttribute('target');
-                       a.href = "javascript:void(0);";
-                       a.onclick = function() { openFileActionModal(decodeURIComponent(filename), a.textContent); };
-                   } else {
-                       a.href = "./docs/" + filename;
-                       a.target = "_blank";
-                       a.onclick = null; 
-                   }
+                   const lowerName = filename.toLowerCase();
+                   
+                   a.removeAttribute('target');
+                   a.href = "javascript:void(0);";
+                   a.onclick = function(e) { 
+                       e.preventDefault();
+                       openPdfViewer(decodeURIComponent(filename), a.textContent, lowerName); 
+                   };
                }
            });
-           const lists = document.querySelectorAll('.data-list');
-           lists.forEach(list => updateListDisplay(list));
            updateCategoryStats(); 
        };
 
-       function openFileActionModal(filename, title) {
-           document.getElementById('file-action-overlay').style.display = 'block';
-           document.body.style.overflow = 'hidden'; 
-           document.getElementById('file-action-title').textContent = "《" + title.replace(/《|》/g, '') + "》";
-           const btnPreview = document.getElementById('btn-preview');
-           const btnDownload = document.getElementById('btn-download');
-           let basePath = window.location.href.split('?')[0].split('#')[0];
-           basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
-           let rawUrl = basePath + "docs/" + encodeURIComponent(filename);
-           let localRelativeUrl = "./docs/" + filename;
-           btnDownload.onclick = function() { window.open(localRelativeUrl, '_blank'); closeFileActionModal(); };
-           const lowerName = filename.toLowerCase();
+       // 2. 沉浸式阅读器核心逻辑
+       function openPdfViewer(filename, title, lowerName) {
+           document.getElementById('pdf-viewer-overlay').style.display = 'flex';
+           document.body.style.overflow = 'hidden'; // 锁定底层网页滚动
+           document.getElementById('viewer-title').textContent = "正在阅读：" + title.replace(/《|》/g, '');
+
+           let rawUrl = "./docs/" + filename;
+           let iframeSrc = rawUrl;
+           
+           // 如果是 Word 文档，需要借助微软的在线服务才能在 iframe 里展示
            if (lowerName.endsWith('.docx') || lowerName.endsWith('.doc')) {
-               btnPreview.style.display = 'block';
-               btnPreview.onclick = function() {
-                   if (basePath.startsWith("file://")) { alert("请在服务器环境下使用预览功能。"); return; }
-                   window.open("https://view.officeapps.live.com/op/view.aspx?src=" + encodeURIComponent(rawUrl), '_blank');
-                   closeFileActionModal();
-               };
-           } else { btnPreview.style.display = 'none'; }
+               let basePath = window.location.href.split('?')[0].split('#')[0];
+               basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+               // 判断是否在服务器环境
+               if (!basePath.startsWith("http")) {
+                   alert("Word 文档需要部署到服务器环境才能在网页内直接预览。\n已为您切换为直接下载。");
+                   closePdfViewer();
+                   window.open(rawUrl, '_blank');
+                   return;
+               }
+               let absoluteUrl = basePath + "docs/" + encodeURIComponent(filename);
+               iframeSrc = "https://view.officeapps.live.com/op/view.aspx?src=" + encodeURIComponent(absoluteUrl);
+           }
+
+           document.getElementById('viewer-iframe').src = iframeSrc;
+           document.getElementById('viewer-download-btn').href = rawUrl;
        }
 
-       function closeFileActionModal() { document.getElementById('file-action-overlay').style.display = 'none'; document.body.style.overflow = 'auto'; }
-       
+       function closePdfViewer() {
+           document.getElementById('pdf-viewer-overlay').style.display = 'none';
+           document.body.style.overflow = 'auto'; // 恢复底层网页滚动
+           document.getElementById('viewer-iframe').src = ""; // 释放内存
+       }
+
+       // 3. 主页面的回到顶部功能
+       window.addEventListener('scroll', function() {
+           const backToTopBtn = document.getElementById('backToTopBtn');
+           if (window.scrollY > 300) {
+               backToTopBtn.style.opacity = '1';
+               backToTopBtn.style.visibility = 'visible';
+           } else {
+               backToTopBtn.style.opacity = '0';
+               backToTopBtn.style.visibility = 'hidden';
+           }
+       });
+
+       function scrollToTop() {
+           window.scrollTo({ top: 0, behavior: 'smooth' });
+       }
+
+       // 4. 原有统计和搜索逻辑
        function updateCategoryStats() {
            ['scripts', 'papers', 'news', 'writings', 'memoirs'].forEach(category => {
                const list = document.getElementById('list-' + category);
@@ -566,12 +574,30 @@
            const sectionBlock = list.closest('.section-block');
            const items = Array.from(list.getElementsByTagName('li'));
            const activeItems = items.filter(item => !item.classList.contains('search-hidden'));
-           activeItems.sort((a, b) => (a.classList.contains('is-recommended') ? 1 : 0) - (b.classList.contains('is-recommended') ? 1 : 0));
            activeItems.forEach(item => item.style.display = 'flex');
            items.forEach(item => { if (item.classList.contains('search-hidden')) item.style.display = 'none'; });
            sectionBlock.style.display = activeItems.length === 0 ? 'none' : 'block';
        }
 
+       function searchDatabase() {
+           const query = document.getElementById('global-search').value.toLowerCase().trim();
+           const lists = document.querySelectorAll('.data-list');
+           const statsPanel = document.querySelector('.category-stats'); 
+           const addBtns = document.querySelectorAll('.add-new-btn');
+           if (query !== '') { if (statsPanel) statsPanel.style.display = 'none'; addBtns.forEach(btn => btn.style.display = 'none'); }
+           else { if (statsPanel) statsPanel.style.display = 'flex'; addBtns.forEach(btn => btn.style.display = 'block'); }
+           lists.forEach(list => {
+               const items = Array.from(list.getElementsByTagName('li'));
+               items.forEach(item => {
+                   const text = item.textContent.toLowerCase();
+                   if (query === '' || text.includes(query)) item.classList.remove('search-hidden');
+                   else item.classList.add('search-hidden');
+               });
+               updateListDisplay(list);
+           });
+       }
+
+       // 5. 原有表单逻辑
        function openAddPage() { document.getElementById('add-page-overlay').style.display = 'block'; document.body.style.overflow = 'hidden'; }
        function closeAddPage() {
            document.getElementById('add-page-overlay').style.display = 'none'; document.body.style.overflow = 'auto'; 
@@ -626,58 +652,14 @@
        function fallbackCopyTextToClipboard(text, msg) {
            const textArea = document.createElement("textarea");
            textArea.value = text;
-           textArea.style.position = "fixed";
-           textArea.style.top = "0";
-           textArea.style.left = "0";
+           textArea.style.position = "fixed"; textArea.style.top = "0"; textArea.style.left = "0";
            document.body.appendChild(textArea);
-           textArea.focus();
-           textArea.select();
+           textArea.focus(); textArea.select();
            try {
                document.execCommand('copy');
                if (msg) alert(msg);
-           } catch (err) {
-               alert('复制失败，请手动复制。');
-           }
+           } catch (err) { alert('复制失败，请手动复制。'); }
            document.body.removeChild(textArea);
-       }
-
-       function searchDatabase() {
-           const query = document.getElementById('global-search').value.toLowerCase().trim();
-           const lists = document.querySelectorAll('.data-list');
-           const statsPanel = document.querySelector('.category-stats'); 
-           const addBtns = document.querySelectorAll('.add-new-btn');
-           if (query !== '') { if (statsPanel) statsPanel.style.display = 'none'; addBtns.forEach(btn => btn.style.display = 'none'); }
-           else { if (statsPanel) statsPanel.style.display = 'flex'; addBtns.forEach(btn => btn.style.display = 'block'); }
-           lists.forEach(list => {
-               const items = Array.from(list.getElementsByTagName('li'));
-               items.forEach(item => {
-                   const text = item.textContent.toLowerCase();
-                   if (query === '' || text.includes(query)) item.classList.remove('search-hidden');
-                   else item.classList.add('search-hidden');
-               });
-               updateListDisplay(list);
-           });
-       }
-
-       // ================= 
-       // 新增：回到顶部功能逻辑
-       // ================= 
-       window.addEventListener('scroll', function() {
-           const backToTopBtn = document.getElementById('backToTopBtn');
-           if (window.scrollY > 300) {
-               backToTopBtn.style.opacity = '1';
-               backToTopBtn.style.visibility = 'visible';
-           } else {
-               backToTopBtn.style.opacity = '0';
-               backToTopBtn.style.visibility = 'hidden';
-           }
-       });
-
-       function scrollToTop() {
-           window.scrollTo({
-               top: 0,
-               behavior: 'smooth' 
-           });
        }
    </script>
 </body>
