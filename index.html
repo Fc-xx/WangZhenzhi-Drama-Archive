@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>王震之戏剧实践数据库</title>
+    <style>
+        /* 新增：全局平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-outer: #f8f5ee; 
+            --bg-inner: rgba(255, 255, 255, 0.86); 
+            --line-gold: #c29b62; 
+            --text-main: #423c37; 
+            --text-red: #8b1c1c; 
+        }
+
+        body {
+            background-color: var(--bg-outer);
+            background-image: 
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='400'%3E%3Ctext x='30' y='100' font-family='STKaiti, SimSun, serif' font-size='26' fill='rgba(139, 28, 28, 0.04)' transform='rotate(-10, 30, 100)'%3E《保卫芦沟桥》%3C/text%3E%3Ctext x='250' y='280' font-family='STKaiti, SimSun, serif' font-size='32' fill='rgba(194, 155, 98, 0.06)' transform='rotate(10, 250, 280)'%3E延安文艺%3C/text%3E%3Ctext x='80' y='350' font-family='STKaiti, SimSun, serif' font-size='22' fill='rgba(0, 0, 0, 0.03)' transform='rotate(-5, 80, 350)'%3E戏剧实践与动员%3C/text%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg stroke='rgba(194, 155, 98, 0.15)' stroke-width='1.5' fill='none'%3E%3Cpath d='M0 15h15v-15 M15 60v-15h-15 M60 45h-15v15 M45 0v15h15'/%3E%3Cpath d='M15 15h30v30h-30z'/%3E%3Cpath d='M25 25h10v10h-10z'/%3E%3Cpath d='M0 30h15 M45 30h15 M30 0v15 M30 45v15'/%3E%3C/g%3E%3C/svg%3E");
+            margin: 0;
+            padding: 3vh 3vw; 
+            font-family: 'STZhongsong', 'SimSun', 'Microsoft YaHei', serif;
+            color: var(--text-main);
+        }
+
+        .container {
+            background-color: var(--bg-inner);
+            border: 1px solid var(--line-gold);
+            outline: 2px solid var(--text-red);
+            outline-offset: -10px;
+            padding: 40px 50px;
+            box-shadow: 0 10px 40px rgba(139, 28, 28, 0.1);
+            position: relative;
+            max-width: 1200px; 
+            margin: 0 auto;    
+        }
+
+        .container::before, .container::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border: 2px solid var(--line-gold);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .container::before { top: 15px; left: 15px; border-right: none; border-bottom: none; }
+        .container::after { bottom: 15px; right: 15px; border-left: none; border-top: none; }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--text-red);
+            padding-bottom: 30px;
+            position: relative;
+        }
+        header::after {
+            content: ''; display: block; width: 60%; height: 1px;
+            background-color: var(--line-gold); margin: 5px auto 0;
+        }
+        header h1 {
+            color: var(--text-red); font-size: 2.8em; letter-spacing: 6px;
+            margin: 0; font-weight: bold; text-shadow: 1px 1px 2px rgba(194, 155, 98, 0.3);
+        }
+        header p {
+            color: var(--text-main); font-size: 1.1em; max-width: 800px;
+            margin: 15px auto 0; opacity: 0.9;
+        }
+
+        nav {
+            text-align: center; margin: 30px 0; padding-bottom: 20px;
+            border-bottom: 1px dashed rgba(194, 155, 98, 0.6);
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; 
+        }
+        nav a {
+            color: var(--text-red); text-decoration: none; font-size: 1.1em;
+            transition: 0.3s; padding: 5px 12px; border: 1px solid transparent; font-weight: bold;
+        }
+        nav a:hover {
+            border: 1px solid var(--line-gold); background-color: rgba(194, 155, 98, 0.1); color: var(--text-main);
+        }
+
+        .intro-text {
+            background-color: rgba(194, 155, 98, 0.06); border-left: 4px solid var(--text-red);
+            padding: 20px 30px; margin: 0 0 40px 0; line-height: 1.8; font-size: 1.05em;
+            color: var(--text-main); box-shadow: inset 0 0 10px rgba(194, 155, 98, 0.05);
+        }
+        .intro-text strong {
+            color: var(--text-red); font-family: 'STKaiti', 'SimSun', serif;
+            font-size: 1.2em; margin-right: 5px;
+        }
+        .intro-text p { margin: 0; text-indent: 2em; }
+
+        .dashboard-panel {
+            background-color: rgba(255, 255, 255, 0.4); border: 1px solid rgba(194, 155, 98, 0.3);
+            padding: 25px; margin-bottom: 40px; border-radius: 3px;
+        }
+        .search-box { margin-bottom: 20px; }
+        .search-box input {
+            width: 100%; padding: 12px 15px; font-size: 1.1em; border: 1px solid var(--line-gold);
+            background-color: #fbf9f6; color: var(--text-main); border-radius: 2px; font-family: inherit;
+        }
+        .search-box input:focus { outline: 1px solid var(--text-red); }
+
+        .category-stats {
+            display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between;
+        }
+        .stat-card {
+            flex: 1; min-width: 140px; text-align: center; padding: 15px 10px;
+            background-color: var(--bg-outer); border: 1px solid var(--line-gold);
+            text-decoration: none; color: var(--text-main); font-weight: bold;
+            transition: 0.3s; display: flex; flex-direction: column; gap: 5px;
+        }
+        .stat-card:hover { background-color: var(--text-red); color: white; border-color: var(--text-red); }
+        .stat-card .count { font-size: 1.6em; color: var(--text-red); font-family: Arial, sans-serif; font-weight: normal; }
+        .stat-card:hover .count { color: white; }
+
+        .section-block {
+            margin-bottom: 40px; padding: 25px 30px; border: 1px solid rgba(194, 155, 98, 0.3);
+            position: relative; background-color: rgba(255, 255, 255, 0.2); border-radius: 3px; overflow: hidden; 
+        }
+        .section-block h2 {
+            color: var(--text-red); border-left: 4px solid var(--line-gold); padding-left: 15px;
+            font-weight: bold; letter-spacing: 2px; border-bottom: 1px solid rgba(194, 155, 98, 0.3); padding-bottom: 8px;
+        }
+
+        .data-list {
+            list-style-type: none; padding: 0; display: flex; flex-direction: column; 
+            max-height: 255px; overflow-y: auto; padding-right: 10px; 
+        }
+        .data-list::-webkit-scrollbar { width: 6px; }
+        .data-list::-webkit-scrollbar-track { background: rgba(194, 155, 98, 0.1); border-radius: 3px; }
+        .data-list::-webkit-scrollbar-thumb { background: var(--line-gold); border-radius: 3px; }
+        .data-list::-webkit-scrollbar-thumb:hover { background: var(--text-red); }
+
+        .data-list li {
+            order: 1; padding: 12px 0; border-bottom: 1px solid rgba(194, 155, 98, 0.3);
+            color: var(--text-main); font-size: 1.05em; display: flex; align-items: flex-start; 
+        }
+        .data-list li::before { content: '■'; color: var(--line-gold); margin-right: 12px; font-size: 0.8em; margin-top: 4px; }
+        .data-list li a { color: var(--text-main); text-decoration: none; transition: color 0.2s; display: inline-block; width: 100%; cursor: pointer; }
+        .data-list li a:hover { color: var(--text-red); text-decoration: underline; }
+
+        .is-recommended {
+            order: 2 !important; margin-left: 1.5em; margin-top: 8px; padding-left: 15px !important;
+            border-left: 3px solid var(--line-gold); background-color: rgba(194, 155, 98, 0.08); 
+            border-bottom: none !important; border-radius: 0 4px 4px 0; 
+        }
+        .is-recommended::before { color: var(--text-red) !important; }
+        .is-recommended a::after {
+            content: ' [相关推荐]'; color: var(--text-red); font-size: 0.85em; margin-left: 10px; font-style: italic;
+        }
+
+        .add-btn {
+            background-color: var(--bg-outer); color: var(--text-red); border: 1px solid var(--text-red);
+            padding: 10px 25px; cursor: pointer; font-family: inherit; font-size: 1em;
+            letter-spacing: 1px; transition: 0.3s; font-weight: bold; white-space: nowrap; 
+        }
+        .add-btn:hover { background-color: var(--text-red); color: #fff; border-color: var(--text-red); }
+        
+        .add-new-btn {
+            width: 100%; margin-top: 15px; border-style: dashed;
+        }
+
+        .add-page-overlay {
+            display: none; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-outer);
+            z-index: 9999; overflow-y: auto;
+        }
+        
+        .add-page-container {
+            background-color: var(--bg-inner); border: 1px solid var(--line-gold);
+            outline: 2px solid var(--text-red); outline-offset: -10px;
+            padding: 50px; max-width: 700px; margin: 8vh auto;
+            box-shadow: 0 15px 50px rgba(139, 28, 28, 0.15); position: relative;
+        }
+        
+        .add-page-container::before, .add-page-container::after {
+            content: ''; position: absolute; width: 25px; height: 25px;
+            border: 2px solid var(--line-gold); pointer-events: none;
+        }
+        .add-page-container::before { top: 15px; left: 15px; border-right: none; border-bottom: none; }
+        .add-page-container::after { bottom: 15px; right: 15px; border-left: none; border-top: none; }
+
+        .add-page-header {
+            text-align: center; color: var(--text-red); font-size: 2em;
+            letter-spacing: 4px; margin-bottom: 30px; border-bottom: 2px solid var(--line-gold); padding-bottom: 15px;
+        }
+
+        .form-group { margin-bottom: 25px; }
+        .form-group label {
+            display: block; font-weight: bold; margin-bottom: 10px; color: var(--text-main); font-size: 1.1em;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px; font-size: 1.05em; border: 1px solid var(--line-gold);
+            background-color: #fbf9f6; color: var(--text-main); font-family: inherit;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: 1px solid var(--text-red); }
+        .form-hint { font-size: 0.85em; color: #888; margin-top: 5px; }
+
+        .add-page-actions { display: flex; gap: 20px; margin-top: 40px; }
+        .add-page-actions button { flex: 1; padding: 12px; font-size: 1.1em; }
+        .btn-cancel { border-style: dashed; }
+
+        footer {
+            margin: 40px auto 20px auto; max-width: 1200px; text-align: center;
+            color: var(--text-main); font-size: 0.95em; line-height: 1.8; padding: 0 20px;
+        }
+        footer strong { color: var(--text-red); }
+        .copyright { margin-top: 15px; font-family: 'Arial', sans-serif; font-size: 0.85em; letter-spacing: 1px; opacity: 0.8; }
+
+        .mobile-break { display: none; }
+
+        /* 回到顶部按钮样式 */
+        .back-to-top {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--bg-inner);
+            color: var(--text-red);
+            border: 2px solid var(--line-gold);
+            border-radius: 50%;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(139, 28, 28, 0.15);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--text-red);
+            color: white;
+            border-color: var(--text-red);
+            transform: translateY(-5px);
+        }
+
+        /* 移动端特殊布局样式 */
+        @media (max-width: 768px) {
+            body { padding: 10px 5px; }
+            .container { padding: 25px 15px; outline-offset: -5px; box-shadow: none; }
+            .container::before, .container::after { width: 15px; height: 15px; }
+            .container::before { top: 10px; left: 10px; }
+            .container::after { bottom: 10px; right: 10px; }
+            header { padding-bottom: 20px; }
+            header h1 { font-size: 1.6em; letter-spacing: 2px; }
+            header p { font-size: 0.95em; margin: 15px 0 25px 0; line-height: 1.6; text-align: center; color: rgba(66, 60, 55, 0.85); }
+            .mobile-break { display: block; }
+            header::after { content: ''; display: block; width: 80%; margin: 0 auto; height: 1px; background-color: rgba(194, 155, 98, 0.6); }
+            nav { gap: 8px; margin: 20px 0; justify-content: center; }
+            nav a { font-size: 0.9em; padding: 6px 0; border: 1px solid rgba(194, 155, 98, 0.2); border-radius: 3px; flex: 0 0 31%; text-align: center; }
+            .category-stats { gap: 8px; justify-content: center; }
+            .stat-card { min-width: 30%; flex: 0 0 31%; padding: 8px 2px; font-size: 0.85em; }
+            .stat-card .count { font-size: 1.25em; margin-top: 3px; }
+            .intro-text { padding: 15px; font-size: 0.95em; }
+            .dashboard-panel, .section-block { padding: 15px; margin-bottom: 25px; }
+            .section-block h2 { font-size: 1.3em; }
+            .data-list li { font-size: 0.95em; padding: 10px 0; }
+            .add-page-container { padding: 25px 15px; margin: 0; min-height: 100vh; outline: none; border: none; }
+            .add-page-header { font-size: 1.5em; margin-bottom: 20px; }
+            .add-page-actions { flex-direction: column; gap: 10px; margin-top: 25px; }
+            footer { margin: 25px auto 15px auto; padding: 0 15px; font-size: 0.85em; line-height: 1.6; }
+            footer p { margin: 5px 0; text-align: justify; text-align-last: center; }
+            
+            /* 移动端回到顶部按钮 */
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>王震之戏剧实践数据库</h1>
+            <p>兼具“行政组织者”与“核心创作者”<br class="mobile-break">双重身份的延安文艺关键人物</p>
+        </header>
+
+        <nav>
+            <a href="#scripts">剧本全文</a>
+            <a href="#papers">研究论文</a>
+            <a href="#news">报刊报道</a>
+            <a href="#writings">自撰文稿</a>
+            <a href="#memoirs">回忆录</a>
+        </nav>
+
+        <div class="intro-text">
+            <p><strong>前言：</strong>王震之作为延安时期重要的戏剧活动家与剧作家，其作品与实践深刻影响了抗日战争至解放战争时期的文艺动员格局。本数据库旨在全面梳理、抢救并数字化保存王震之相关的剧本、演出记录、档案手稿及后世研究，为进一步探讨延安文艺的发展脉络提供坚实的史料支撑。</p>
+        </div>
+
+        <div class="dashboard-panel">
+            <div class="search-box">
+                <input type="text" id="global-search" placeholder="输入关键词，检索全库 69 份源文件..." onkeyup="searchDatabase()">
+            </div>
+            <div class="category-stats">
+                <a href="#scripts" class="stat-card">剧本全文 <span class="count">7</span></a>
+                <a href="#papers" class="stat-card">研究论文 <span class="count">5</span></a>
+                <a href="#news" class="stat-card">报刊报道 <span class="count">45</span></a>
+                <a href="#writings" class="stat-card">自撰文稿 <span class="count">8</span></a>
+                <a href="#memoirs" class="stat-card">回忆录 <span class="count">4</span></a>
+            </div>
+        </div>
+
+        <div class="section-block" id="scripts">
+            <h2>剧本全文</h2>
+            <ul class="data-list" id="list-scripts">
+                <li><a href="./docs/“红灯”（独幕剧）.pdf">《红灯》（独幕剧）</a></li>
+                <li><a href="./docs/大丹河（话剧大丹河插曲）：[歌曲].pdf">《大丹河》—— 话剧《大丹河》插曲 [歌曲]</a></li>
+                <li><a href="./docs/古城的怒吼(独幕剧).pdf">《古城的怒吼》（独幕剧）</a></li>
+                <li><a href="./docs/流寇队长.pdf">《流寇队长》</a></li>
+                <li><a href="./docs/咆哮的河北（独幕剧）.pdf">《咆哮的河北》（独幕剧）</a></li>
+                <li><a href="./docs/顺民 (崔嵬，王震之合著) (Z-Library)_49632.pdf">《顺民》（崔嵬、王震之合著）</a></li>
+                <li><a href="./docs/松花江上.pdf">《松花江上》</a></li>
+            </ul>
+            <button class="add-btn add-new-btn" onclick="openAddPage('scripts')">＋ 提交文献补充</button>
+        </div>
+
+        <div class="section-block" id="papers">
+            <h2>研究论文</h2>
+            <ul class="data-list" id="list-papers">
+                <li><a href="./docs/惨胜的体制与渐败的人——试论“吕何联盟”及其“春天喜剧社”的前因后果_李道新.pdf">《惨胜的体制与渐败的人——试论“吕何联盟”及其“春天喜剧社”的前因后果》—— 李道新</a></li>
+                <li><a href="./docs/当代戏剧创作对延安红色戏剧的文本创新研究_张瑾.pdf">《当代戏剧创作对延安红色戏剧的文本创新研究》—— 张瑾</a></li>
+                <li><a href="./docs/红色戏剧教育研究（1933-1950）_张道远.pdf">《红色戏剧教育研究（1933-1950）》—— 张道远</a></li>
+                <li><a href="./docs/抗战初期上海救亡演剧队研究（1937-1938）_游思静.pdf">《抗战初期上海救亡演剧队研究（1937-1938）》—— 游思静</a></li>
+                <li><a href="./docs/延安鲁艺音乐社团研究_夏佩婷.pdf">《延安鲁艺音乐社团研究》—— 夏佩婷</a></li>
+            </ul>
+            <button class="add-btn add-new-btn" onclick="openAddPage('papers')">＋ 提交文献补充</button>
+        </div>
+
+       <div class="section-block" id="news">
+            <h2>报刊报道</h2>
+            <ul class="data-list" id="list-news">
+                <li><a href="./docs/保卫芦沟桥.pdf">《保卫芦沟桥》</a></li>
+                <li><a href="./docs/部艺工作团的新年演出.pdf">《部艺工作团的新年演出》</a></li>
+                <li><a href="./docs/催缴房金.pdf">《催缴房金》</a></li>
+                <li><a href="./docs/大公戎剧电影读者会集体创作之一：.pdf">《大公戎剧电影读者会集体创作之一》</a></li>
+                <li><a href="./docs/[T]上海邮务工会平剧股彩排记邮务工会平剧股、成立有年、历次彩…….pdf">《上海邮务工会平剧股彩排记》</a></li>
+                <li><a href="./docs/[T]一++陜甘宁边区××文化工作委员会戏剧委日会王震之…….pdf">《陕甘宁边区文化工作委员会戏剧委员会》</a></li>
+                <li><a href="./docs/“内蒙春光”编剧.pdf">《“内蒙春光”编剧》</a></li>
+                <li><a href="./docs/“卫国保家”无限光荣.pdf">《“卫国保家”无限光荣》</a></li>
+                <li><a href="./docs/“赵登禹之死”剧本.pdf">《“赵登禹之死”剧本》</a></li>
+                <li><a href="./docs/东影制片近况.pdf">《东影制片近况》</a></li>
+                <li><a href="./docs/反帝总会筹备.pdf">《反帝总会筹备》</a></li>
+                <li><a href="./docs/肤施之新教育.pdf">《肤施之新教育》</a></li>
+                <li><a href="./docs/桂林各界工友.pdf">《桂林各界工友》</a></li>
+                <li><a href="./docs/桂市点滴.pdf">《桂市点滴》</a></li>
+                <li><a href="./docs/沪江商院剧团公演.pdf">《沪江商院剧团公演》</a></li>
+                <li><a href="./docs/纪念中华文协一周年.pdf">《纪念中华文协一周年》</a></li>
+                <li><a href="./docs/尖头山上.pdf">《尖头山上》</a></li>
+                <li><a href="./docs/京沪平湘剧人.pdf">《京沪平湘剧人》</a></li>
+                <li><a href="./docs/救亡演剧队募款启.pdf">《救亡演剧队募款启》</a></li>
+                <li><a href="./docs/救亡演剧募款启.pdf">《救亡演剧募款启》</a></li>
+                <li><a href="./docs/抗战艺术在肤施.pdf">《抗战艺术在肤施》</a></li>
+                <li><a href="./docs/流寇队长 (王震之) (Z-Library)_38053.pdf">《流寇队长》</a></li>
+                <li><a href="./docs/鹿城文史资料 第2辑 (中国人民政治协商会议浙江省温州市鹿城区委员会) (Z-Library)_63596.pdf">《鹿城文史资料 第2辑》</a></li>
+                <li><a href="./docs/南京将是电影城.pdf">《南京将是电影城》</a></li>
+                <li><a href="./docs/京漠津浦之战况.pdf">《京漠津浦之战况》</a></li>
+                <li><a href="./docs/救亡演剧队即日出发.pdf">《救亡演剧队即日出发》</a></li>
+                <li><a href="./docs/救亡演剧队募款启 (1).pdf">《救亡演剧队募款启 (1)》</a></li>
+                <li><a href="./docs/三幕剧流寇队长第二幕(续).pdf">《三幕剧流寇队长第二幕(续)》</a></li>
+                <li><a href="./docs/三幕剧流寇队长第三幕(续).pdf">《三幕剧流寇队长第三幕(续)》</a></li>
+                <li><a href="./docs/三幕剧流寇队长第一幕(续).pdf">《三幕剧流寇队长第一幕(续)》</a></li>
+                <li><a href="./docs/上海邮务工会.pdf">《上海邮务工会》</a></li>
+                <li><a href="./docs/同犯证实.pdf">《同犯证实》</a></li>
+                <li><a href="./docs/铜版丢进黄浦.pdf">《铜版丢进黄浦》</a></li>
+                <li><a href="./docs/庆祝戏剧节夏声有彩排.pdf">《庆祝戏剧节夏声有彩排》</a></li>
+                <li><a href="./docs/全国剧界抗协.pdf">《全国剧界抗协》</a></li>
+                <li><a href="./docs/三幕剧流寇队长.pdf">《三幕剧流寇队长》</a></li>
+                <li><a href="./docs/文化消息.pdf">《文化消息》</a></li>
+                <li><a href="./docs/吴兴一参议员++替他策画制造.pdf">《吴兴一参议员 替他策画制造》</a></li>
+                <li><a href="./docs/香岛影剧.pdf">《香岛影剧》</a></li>
+                <li><a href="./docs/新艺术影片在制作中.pdf">《新艺术影片在制作中》</a></li>
+                <li><a href="./docs/要求检查美片声中国产片抬头了.pdf">《要求检查美片声中国产片抬头了》</a></li>
+                <li><a href="./docs/一九三八年.pdf">《一九三八年》</a></li>
+                <li><a href="./docs/在南京.pdf">《在南京》</a></li>
+                <li><a href="./docs/在清华同学会举行.pdf">《在清华同学会举行》</a></li>
+                <li><a href="./docs/中国歌舞剧艺社.pdf">《中国歌舞剧艺社》</a></li>
+            </ul>
+            <button class="add-btn add-new-btn" onclick="openAddPage('news')">＋ 提交文献补充</button>
+        </div>
+
+        <div class="section-block" id="writings">
+            <h2>王震之自撰文稿</h2>
+            <ul class="data-list" id="list-writings">
+                <li><a href="./docs/“丰收”观后感.pdf">《“丰收”观后感》</a></li>
+                <li><a href="./docs/《内蒙春光》的检讨（王震之书）.docx">《&lt;内蒙春光&gt;的检讨》</a></li>
+                <li><a href="./docs/剿灭隐蔽的“地下军”.docx">《剿灭隐蔽的“地下军”》</a></li>
+                <li><a href="./docs/鹿城文史资料 第4辑 (解放初的温州影剧院——王震之p122-128).pdf">《解放初的温州影剧院》（鹿城文史资料 第4辑）</a></li>
+                <li><a href="./docs/鹿城文史资料 第6辑 温州城区历代人物录 (追忆夏家仁烈士 王震之 史拾一 p171-173）.pdf">《追忆夏家仁烈士》（鹿城文史资料 第6辑）</a></li>
+                <li><a href="./docs/王震之自述整理.docx">《王震之自述整理》</a></li>
+                <li><a href="./docs/温州文史资料 第2辑 纪念抗日战争胜利四十周 (上前线去！到皖南去！ 王震之 P76~81).pdf">《上前线去！到皖南去！》（温州文史资料 第2辑）</a></li>
+                <li><a href="./docs/鹿城文史资料 第14辑 (追忆在皖南新四军聆听周恩来同志做报告 王震之 P90~94).pdf">《追忆在皖南新四军聆听周恩来同志作报告》</a></li>
+            </ul>
+            <button class="add-btn add-new-btn" onclick="openAddPage('writings')">＋ 提交文献补充</button>
+        </div>
+
+        <div class="section-block" id="memoirs">
+            <h2>回忆录</h2>
+            <ul class="data-list" id="list-memoirs">
+                <li><a href="./docs/保卫芦沟桥 抗战动员.pdf">《保卫芦沟桥 抗战动员》</a></li>
+                <li><a href="./docs/毛泽东与河北 下 (毛泽东与王震之P150~152).pdf">《毛泽东与河北 下》（毛泽东与王震之 P150~152）</a></li>
+                <li><a href="./docs/思念——纪念王震之.pdf">《思念——纪念王震之》</a></li>
+                <li><a href="./docs/我的思念（对王震之的回忆录）.docx">《我的思念（对王震之的回忆录）》</a></li>
+            </ul>
+            <button class="add-btn add-new-btn" onclick="openAddPage('memoirs')">＋ 提交文献补充</button>
+        </div>
+    </div> 
+    
+    <footer>
+        <p><strong>致谢与说明</strong></p>
+        <p>本项目的推进与发展，离不开社会各界宝贵而慷慨的支持</p>
+        <p>我们由衷感谢中央戏剧学院校园媒体中心“常青藤之声”在校园文化传播与口述史料整理方面所做的协助。特别鸣谢抗日战争与近代史中日关系文献数据平台、全国报刊索引，以及延安大学图书馆数字资源-红色报纸数据库所提供的大量珍稀文献与历史影像，为本项目奠定了坚实的史料基础。</p>
+        <p>《人民日报》数据库、《解放日报》数据库、维普期刊平台及中国知网，读秀等在资料检索与学术文献获取方面给予了极大便利，为本研究提供了前沿的学术视野与丰富的参考依据。部分孤本手稿及历史照片由相关纪念馆及家属独家授权提供，谨此致以诚挚谢意。</p>
+        <p class="copyright">© 2024 王震之戏剧实践研究课题组. 弘扬延安精神，赓续文艺血脉.</p>
+    </footer>
+
+    <!-- 新增：回到顶部按钮 -->
+    <button id="backToTopBtn" class="back-to-top" onclick="scrollToTop()" title="回到顶部">
+        ↑
+    </button>
+
+    <div id="add-page-overlay" class="add-page-overlay">
+        <div class="add-page-container">
+            <h2 class="add-page-header">提交文献审核</h2>
+            <div class="form-group">
+                <label>文献名称：</label>
+                <input type="text" id="doc-title" placeholder="例如：《抗战初期的戏剧》">
+            </div>
+            <div class="form-group">
+                <label>文献核心内容：</label>
+                <textarea id="doc-content" rows="3" placeholder="简要描述该文献的核心观点、历史价值或主要内容..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>贡献者昵称：</label>
+                <input type="text" id="contributor-name" placeholder="您的称呼">
+            </div>
+            <div class="form-group">
+                <label>联系电话：</label>
+                <input type="tel" id="contributor-phone" placeholder="您的手机号码">
+            </div>
+            <div class="form-group">
+                <label>个人邮箱：</label>
+                <input type="email" id="contributor-email" placeholder="您的电子邮箱地址">
+            </div>
+            <div style="background-color: rgba(194, 155, 98, 0.1); padding: 15px; border-left: 3px solid var(--text-red); margin-bottom: 20px; font-size: 0.9em; line-height: 1.5; color: var(--text-main);">
+                <strong>提交流程：</strong>填写信息并点击提交后，请根据提示选择您习惯的邮箱发送文献原件至 <strong>tangdu91@qq.com</strong>。
+            </div>
+            <div class="add-page-actions">
+                <button class="add-btn btn-cancel" onclick="closeAddPage()">取消返回</button>
+                <button class="add-btn" onclick="submitNewData()">提交申请</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="file-action-overlay" class="add-page-overlay">
+        <div class="add-page-container" style="max-width: 450px; text-align: center; margin-top: 15vh;">
+            <h2 class="add-page-header" style="font-size: 1.5em; margin-bottom: 20px;">请选择查阅方式</h2>
+            <p id="file-action-title" style="margin-bottom: 30px; font-weight: bold; color: var(--text-main); font-size: 1.05em; line-height: 1.5; padding: 0 10px;"></p>
+            <div class="add-page-actions" style="margin-top: 0; flex-direction: column; gap: 15px;">
+                <button id="btn-preview" class="add-btn" style="display: none; width: 100%;">👀 在线预览</button>
+                <button id="btn-download" class="add-btn" style="width: 100%;">⬇️ 直接下载 / 本地打开</button>
+                <button class="add-btn btn-cancel" onclick="closeFileActionModal()" style="width: 100%; margin-top: 10px;">取消返回</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="email-choice-overlay" class="add-page-overlay">
+        <div class="add-page-container" style="max-width: 450px; text-align: center; margin-top: 12vh;">
+            <h2 class="add-page-header" style="font-size: 1.5em; margin-bottom: 15px;">选择发送方式</h2>
+            <p style="font-size: 0.9em; color: #666; margin-bottom: 20px; padding: 0 10px;">我们已为您准备好文献登记信息，请选择：</p>
+            
+            <div class="add-page-actions" style="margin-top: 0; flex-direction: column; gap: 12px;">
+                <button onclick="handleEmailMethod('app')" class="add-btn" style="width: 100%; background-color: var(--text-red); color: white;">唤起默认邮件 App</button>
+                <div style="height: 1px; background: #eee; margin: 5px 0;"></div>
+                <button onclick="handleEmailMethod('qq')" class="add-btn" style="width: 100%;">前往 QQ 邮箱网页版</button>
+                <button onclick="handleEmailMethod('netease')" class="add-btn" style="width: 100%;">前往网易邮箱网页版</button>
+                <button onclick="handleEmailMethod('copy')" class="add-btn" style="width: 100%; border-style: dotted;">仅复制登记信息(自行发送)</button>
+                <button class="add-btn btn-cancel" onclick="closeEmailChoiceModal()" style="width: 100%; margin-top: 10px;">取消返回</button>
+            </div>
+        </div>
+    </div>
+
+   <script>
+       let tempMailInfo = { subject: "", body: "", target: "tangdu91@qq.com" };
+
+       function isMobileDevice() {
+           return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+       }
+
+       window.onload = function() {
+           const existingLinks = document.querySelectorAll('.data-list li a');
+           existingLinks.forEach(a => {
+               const href = a.getAttribute('href');
+               if (href && href !== '#' && href !== 'javascript:void(0);') {
+                   const filename = href.split('/').pop(); 
+                   if (isMobileDevice()) {
+                       a.removeAttribute('target');
+                       a.href = "javascript:void(0);";
+                       a.onclick = function() { openFileActionModal(decodeURIComponent(filename), a.textContent); };
+                   } else {
+                       a.href = "./docs/" + filename;
+                       a.target = "_blank";
+                       a.onclick = null; 
+                   }
+               }
+           });
+           const lists = document.querySelectorAll('.data-list');
+           lists.forEach(list => updateListDisplay(list));
+           updateCategoryStats(); 
+       };
+
+       function openFileActionModal(filename, title) {
+           document.getElementById('file-action-overlay').style.display = 'block';
+           document.body.style.overflow = 'hidden'; 
+           document.getElementById('file-action-title').textContent = "《" + title.replace(/《|》/g, '') + "》";
+           const btnPreview = document.getElementById('btn-preview');
+           const btnDownload = document.getElementById('btn-download');
+           let basePath = window.location.href.split('?')[0].split('#')[0];
+           basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+           let rawUrl = basePath + "docs/" + encodeURIComponent(filename);
+           let localRelativeUrl = "./docs/" + filename;
+           btnDownload.onclick = function() { window.open(localRelativeUrl, '_blank'); closeFileActionModal(); };
+           const lowerName = filename.toLowerCase();
+           if (lowerName.endsWith('.docx') || lowerName.endsWith('.doc')) {
+               btnPreview.style.display = 'block';
+               btnPreview.onclick = function() {
+                   if (basePath.startsWith("file://")) { alert("请在服务器环境下使用预览功能。"); return; }
+                   window.open("https://view.officeapps.live.com/op/view.aspx?src=" + encodeURIComponent(rawUrl), '_blank');
+                   closeFileActionModal();
+               };
+           } else { btnPreview.style.display = 'none'; }
+       }
+
+       function closeFileActionModal() { document.getElementById('file-action-overlay').style.display = 'none'; document.body.style.overflow = 'auto'; }
+       
+       function updateCategoryStats() {
+           ['scripts', 'papers', 'news', 'writings', 'memoirs'].forEach(category => {
+               const list = document.getElementById('list-' + category);
+               const statCard = document.querySelector(`.stat-card[href="#${category}"] .count`);
+               if (list && statCard) statCard.textContent = list.getElementsByTagName('li').length;
+           });
+       }
+
+       function updateListDisplay(list) {
+           const sectionBlock = list.closest('.section-block');
+           const items = Array.from(list.getElementsByTagName('li'));
+           const activeItems = items.filter(item => !item.classList.contains('search-hidden'));
+           activeItems.sort((a, b) => (a.classList.contains('is-recommended') ? 1 : 0) - (b.classList.contains('is-recommended') ? 1 : 0));
+           activeItems.forEach(item => item.style.display = 'flex');
+           items.forEach(item => { if (item.classList.contains('search-hidden')) item.style.display = 'none'; });
+           sectionBlock.style.display = activeItems.length === 0 ? 'none' : 'block';
+       }
+
+       function openAddPage() { document.getElementById('add-page-overlay').style.display = 'block'; document.body.style.overflow = 'hidden'; }
+       function closeAddPage() {
+           document.getElementById('add-page-overlay').style.display = 'none'; document.body.style.overflow = 'auto'; 
+           ['doc-title', 'doc-content', 'contributor-name', 'contributor-phone', 'contributor-email'].forEach(id => document.getElementById(id).value = '');
+       }
+
+       function submitNewData() {
+           const title = document.getElementById('doc-title').value.trim();
+           const content = document.getElementById('doc-content').value.trim();
+           const name = document.getElementById('contributor-name').value.trim();
+           const phone = document.getElementById('contributor-phone').value.trim();
+           const email = document.getElementById('contributor-email').value.trim();
+
+           if (title === '' || name === '' || email === '') { alert('请完善必填项！'); return; }
+
+           tempMailInfo.subject = "【文献补充】《" + title + "》 - " + name;
+           tempMailInfo.body = `审核团队您好：\n\n我为王震之数据库提交新文献：\n【名称】《${title}》\n【内容】${content || "未填写"}\n\n【贡献者】${name}\n【电话】${phone || "未留"}\n【邮箱】${email}\n\n注意：请务必上传附件！`;
+
+           closeAddPage();
+           document.getElementById('email-choice-overlay').style.display = 'block';
+       }
+
+       function closeEmailChoiceModal() { document.getElementById('email-choice-overlay').style.display = 'none'; document.body.style.overflow = 'auto'; }
+
+       function handleEmailMethod(type) {
+           const copyText = `收件人：${tempMailInfo.target}\n主题：${tempMailInfo.subject}\n\n正文内容：\n${tempMailInfo.body}`;
+           
+           if (type === 'app') {
+               window.location.href = `mailto:${tempMailInfo.target}?subject=${encodeURIComponent(tempMailInfo.subject)}&body=${encodeURIComponent(tempMailInfo.body)}`;
+           } else if (type === 'qq') {
+               copyToClipboard(copyText, "登记信息已复制！正在为您打开 QQ 邮箱网页版...");
+               setTimeout(() => { window.open('https://mail.qq.com', '_blank'); }, 1500);
+           } else if (type === 'netease') {
+               copyToClipboard(copyText, "登记信息已复制！正在为您打开网易邮箱网页版...");
+               setTimeout(() => { window.open('https://mail.163.com', '_blank'); }, 1500);
+           } else if (type === 'copy') {
+               copyToClipboard(copyText, "登记信息已成功复制到剪贴板！请手动粘贴发送至 tangdu91@qq.com");
+           }
+           closeEmailChoiceModal();
+       }
+
+       function copyToClipboard(text, msg) {
+           if (navigator.clipboard && window.isSecureContext) {
+               navigator.clipboard.writeText(text).then(() => {
+                   if (msg) alert(msg);
+               }).catch(() => fallbackCopyTextToClipboard(text, msg));
+           } else {
+               fallbackCopyTextToClipboard(text, msg);
+           }
+       }
+
+       function fallbackCopyTextToClipboard(text, msg) {
+           const textArea = document.createElement("textarea");
+           textArea.value = text;
+           textArea.style.position = "fixed";
+           textArea.style.top = "0";
+           textArea.style.left = "0";
+           document.body.appendChild(textArea);
+           textArea.focus();
+           textArea.select();
+           try {
+               document.execCommand('copy');
+               if (msg) alert(msg);
+           } catch (err) {
+               alert('复制失败，请手动复制。');
+           }
+           document.body.removeChild(textArea);
+       }
+
+       function searchDatabase() {
+           const query = document.getElementById('global-search').value.toLowerCase().trim();
+           const lists = document.querySelectorAll('.data-list');
+           const statsPanel = document.querySelector('.category-stats'); 
+           const addBtns = document.querySelectorAll('.add-new-btn');
+           if (query !== '') { if (statsPanel) statsPanel.style.display = 'none'; addBtns.forEach(btn => btn.style.display = 'none'); }
+           else { if (statsPanel) statsPanel.style.display = 'flex'; addBtns.forEach(btn => btn.style.display = 'block'); }
+           lists.forEach(list => {
+               const items = Array.from(list.getElementsByTagName('li'));
+               items.forEach(item => {
+                   const text = item.textContent.toLowerCase();
+                   if (query === '' || text.includes(query)) item.classList.remove('search-hidden');
+                   else item.classList.add('search-hidden');
+               });
+               updateListDisplay(list);
+           });
+       }
+
+       // ================= 
+       // 新增：回到顶部功能逻辑
+       // ================= 
+       window.addEventListener('scroll', function() {
+           const backToTopBtn = document.getElementById('backToTopBtn');
+           if (window.scrollY > 300) {
+               backToTopBtn.style.opacity = '1';
+               backToTopBtn.style.visibility = 'visible';
+           } else {
+               backToTopBtn.style.opacity = '0';
+               backToTopBtn.style.visibility = 'hidden';
+           }
+       });
+
+       function scrollToTop() {
+           window.scrollTo({
+               top: 0,
+               behavior: 'smooth' 
+           });
+       }
+   </script>
+</body>
+</html>
